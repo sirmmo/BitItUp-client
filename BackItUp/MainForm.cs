@@ -15,7 +15,7 @@ using System.Windows.Forms;
 
 namespace BackItUp
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
 
         private ClientEngine engine;
@@ -23,10 +23,9 @@ namespace BackItUp
         private Dictionary<DirectoryInfo, Torrent> torrents = new Dictionary<DirectoryInfo, Torrent>();
         private Dictionary<DirectoryInfo, TorrentManager> mgrs = new Dictionary<DirectoryInfo, TorrentManager>();
 
-        public Form1()
+        public MainForm()
         {
             InitializeComponent();
-            ListDirectory(treeView1, "C:/");
             EngineSettings es = new EngineSettings();
             es.AllowedEncryption = MonoTorrent.Client.Encryption.EncryptionTypes.All;
             es.PreferEncryption = true;
@@ -35,56 +34,6 @@ namespace BackItUp
             
         }
 
-        private void ListDirectory(TreeView treeView, string path)
-        {
-            treeView.Nodes.Clear();
-            var rootDirectoryInfo = new DirectoryInfo(path);
-            TreeNode directoryNode = new TreeNode(rootDirectoryInfo.Name);
-            directoryNode.Tag = rootDirectoryInfo;
-            treeView.Nodes.Add(directoryNode);
-            CreateDirectoryNode(directoryNode);
-        }
-
-        private void ExpandDirectory(TreeNode node)
-        {
-            var directoryInfo = node.Tag as DirectoryInfo;
-            node.Nodes.Clear();
-            CreateDirectoryNode(node);
-        }
-
-        private static void CreateDirectoryNode(TreeNode directoryNode)
-        {
-            var directoryInfo = directoryNode.Tag as DirectoryInfo;
-            try
-            {
-                foreach (var directory in directoryInfo.GetDirectories())
-                {
-                    var idn = new TreeNode(directory.Name);
-                    idn.Tag = directory;
-                    directoryNode.Nodes.Add(idn);
-                }
-                foreach (var file in directoryInfo.GetFiles())
-                {
-                    directoryNode.Nodes.Add(new TreeNode(file.Name));
-                }
-            }
-            catch (Exception) { }
-        }
-
-        private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
-        {
-
-            TreeNode t = e.Node;
-            ExpandDirectory(t);
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            if (folderBrowserDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                MessageBox.Show(folderBrowserDialog1.SelectedPath);
-            }
-        }
 
         private void treeView1_AfterCheck(object sender, TreeViewEventArgs e)
         {
@@ -142,6 +91,25 @@ namespace BackItUp
             TorrentManager m = new TorrentManager(torrent, "DOWN", new TorrentSettings());
             engine.StartAll();
         }
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+
+            if (folderBrowserDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                BackupAdder ad = new BackupAdder();
+                ad.Path = folderBrowserDialog1.SelectedPath;
+                if (ad.ShowDialog() == System.Windows.Forms.DialogResult.OK) { 
+                                        
+                }
+            }
+        }
+
+        private void dropboxToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
 
     }
 
